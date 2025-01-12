@@ -1,4 +1,4 @@
-"use client"; // Add this at the top
+"use client";
 
 import { useEffect, useState } from "react";
 
@@ -8,17 +8,32 @@ export default function GalleryGrid() {
   useEffect(() => {
     const fetchImages = async () => {
       const response = await fetch("/api/images");
-      const data = await response.json();
-      setImages(data);
+      if (response.ok) {
+        const data = await response.json();
+        setImages(data);
+      } else {
+        console.error("Kunde inte hämta bilder");
+      }
     };
 
     fetchImages();
   }, []);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "10px",
+      }}
+    >
       {images.map((image) => (
-        <img key={image.id} src={image.url} alt="Uploaded" style={{ width: "100%" }} />
+        <img
+          key={image.id}
+          src={image.url}
+          alt="Uppladdad bild"
+          style={{ width: "100%" }}
+        />
       ))}
     </div>
   );

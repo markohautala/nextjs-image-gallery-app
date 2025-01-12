@@ -1,4 +1,4 @@
-"use client"; // Add this at the top
+"use client";
 
 import { useState } from "react";
 
@@ -6,36 +6,48 @@ export default function UploadBox() {
   const [loading, setLoading] = useState(false);
 
   const handleUpload = async (e) => {
-    const files = e.target.files;
-    if (!files) return;
+    const files = e.target.files; // Hämtar filerna från input
+    if (!files || files.length === 0) return;
 
     setLoading(true);
 
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append("file", file);
-    }
-
     try {
+      const formData = new FormData();
+      // Lägg till varje fil i FormData
+      for (const file of files) {
+        formData.append("file", file); // Lägg till filen
+      }
+
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formData,
+        body: formData, // Skicka FormData som request body
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Uploaded image URL:", data.url);
-        // Redirect or reload to gallery
+        console.log("Bild uppladdad:", data.url);
+
+        // Omdirigera användaren till galleriet
+        window.location.href = "/gallery";
+      } else {
+        console.error("Uppladdningen misslyckades");
       }
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Fel vid uppladdning:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ border: "2px dashed gray", padding: "20px", borderRadius: "8px" }}>
+    <div
+      style={{
+        border: "2px dashed gray",
+        padding: "20px",
+        borderRadius: "8px",
+        textAlign: "center",
+      }}
+    >
       <p>Drag and drop images here, or click to upload</p>
       <input
         type="file"
