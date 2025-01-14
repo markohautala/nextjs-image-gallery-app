@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}", // Include files in `app`
+    "./components/**/*.{js,ts,jsx,tsx,mdx}", // Include files in `components`
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}", // Include files in `pages` (if used)
   ],
   theme: {
     extend: {
@@ -15,3 +15,5 @@ export default {
   },
   plugins: [],
 };
+
+export default config;
