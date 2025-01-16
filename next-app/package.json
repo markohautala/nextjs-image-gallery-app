@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "autoprefixer": "^10.4.20",
     "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
