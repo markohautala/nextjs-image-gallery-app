@@ -1,10 +1,11 @@
-import Navbar from "../components/Navbar"; // Import the Navbar component
+import "./globals.css";
+import Navbar from "../components/Navbar";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar /> {/* Navbar is now included globally */}
+        <Navbar />
         <main>{children}</main>
       </body>
     </html>
