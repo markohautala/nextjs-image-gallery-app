@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 w-full">
         <div className="relative flex h-16 items-center">
           {/* PIXSHARE Text on the left */}
-          <div className="text-black text-lg font-bold">
+          <div className="text-black text-2xl font-bold">
             PIXSHARE
           </div>
 
@@ -40,7 +40,7 @@ const Navbar = () => {
 
             <Link
               href="/gallery"
-              className={`rounded-full bg-gray-800 px-5 py-4 text-sm font-semibold text-white shadow-sm ${
+              className={`rounded-full bg-gray-800 px-4 py-4 text-sm font-semibold text-white shadow-sm ${
                 pathname === '/gallery'
                   ? 'border-1 border-white bg-black text-white' // Active state
                   : 'text-gray-300 hover:bg-black hover:text-white' // Default hover behavior
