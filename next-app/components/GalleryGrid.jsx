@@ -56,6 +56,16 @@ export default function GalleryGrid() {
     };
   }, [images]); // Run this effect every time the images change
 
+  // Function to download the image
+  const downloadImage = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = ''; // This will download the image
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="gallery-container">
       {isLoading ? (
@@ -66,13 +76,17 @@ export default function GalleryGrid() {
       ) : (
         <div className="gallery-columns">
           {images.map((image, index) => (
-            <img
-              key={image.id}
-              src={image.url}
-              alt="Uploaded image"
-              className="gallery-image"
-              ref={(el) => (imageRefs.current[index] = el)} // Assign ref to each image
-            />
+            <div className="image-container" key={image.id}>
+              <img
+                src={image.url}
+                alt="Uploaded image"
+                className="gallery-image"
+                ref={(el) => (imageRefs.current[index] = el)} // Assign ref to each image
+              />
+              <div className="download-square" onClick={() => downloadImage(image.url)}>
+                <span className="material-symbols-outlined">download</span>
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -102,7 +116,7 @@ export default function GalleryGrid() {
           width: 100%;
           margin-bottom: 10px;
           border-radius: 12px;
-          object-fit: cover;
+          object-fit: cover; /* Ensures images fit well */
           display: block; /* Ensures images stay aligned within columns */
           opacity: 0; /* Initially set to fully transparent */
           transition: opacity 0.7s ease-out; /* Smooth fade-in transition */
@@ -123,6 +137,34 @@ export default function GalleryGrid() {
         /* Fade-in effect when image comes into view */
         .fade-in {
           opacity: 1; /* Make image fully opaque */
+        }
+
+        .image-container {
+          position: relative; // Position relative for absolute children
+        }
+
+        .download-square {
+          position: absolute; // Position it over the image
+          top: 10px; // Move to the top
+          right: 10px; // Move to the right
+          width: 50px; // Set width to 45px
+          height: 50px; // Set height to 45px
+          background: rgba(255, 255, 255, 0.2); // Glassmorphism effect
+          backdrop-filter: blur(20px); // Blur effect
+          border-radius: 5px; // Rounded corners
+          display: flex; // Center the icon
+          justify-content: center; // Center horizontally
+          align-items: center; // Center vertically
+          cursor: pointer; // Change cursor to pointer
+        }
+
+        .download-square:hover {
+          background: rgba(255, 255, 255, 0.4); // Change on hover
+        }
+
+        .material-symbols-outlined {
+          color: white; // Set icon color to white
+          font-size: 34px; // Adjust icon size if needed
         }
       `}</style>
     </div>
