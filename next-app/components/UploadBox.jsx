@@ -42,7 +42,7 @@ export default function UploadBox() {
       } finally {
         setLoading(false); // Hide loading state after the upload process
       }
-    }, 4000); // 2000ms = 2 seconds delay before starting the upload
+    }, 4000); // 4000ms = 4 seconds delay before starting the upload
   };
 
   // Prevent default behavior for drag events
@@ -68,30 +68,35 @@ export default function UploadBox() {
   return (
     <div
       style={{
-        display: "flex", // Use Flexbox
-        justifyContent: "center", // Center horizontally
-        alignItems: "flex-start", // Align items to the top (to allow space above)
-        height: "100vh", // Full viewport height
-        width: "100vw", // Full viewport width
-        paddingTop: "20vh", // Adds space from the top, move the box upwards by 20% of the viewport height
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        height: "100vh",
+        width: "100vw",
+        paddingTop: "20vh",
       }}
     >
       <div
-        onClick={handleClick} // Make the entire div clickable
-        onDragOver={handleDragOver} // Allow files to be dragged over the div
-        onDrop={handleDrop} // Handle file drop inside the div
-        onDragLeave={handleDragLeave} // Reset drag state when leaving the area
+        onClick={handleClick}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onDragLeave={handleDragLeave}
         style={{
-          width: "75vw", // Make the div 75% of screen width
-          border: dragging ? "2px solid #4CAF50" : "2px dashed gray", // Change border style when dragging
+          width: "75vw",
+          border: dragging ? "2px solid #4CAF50" : "2px dashed gray",
           padding: "20px",
           borderRadius: "8px",
           textAlign: "center",
-          cursor: "pointer", // Indicate it's clickable
+          cursor: "pointer",
           position: "relative",
-          boxSizing: "border-box", // Make sure padding does not affect width
+          boxSizing: "border-box",
         }}
       >
+        {/* Upload Icon */}
+        <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "#7CACF8" }}>
+          cloud_upload
+        </span>
+
         <p>
           {dragging
             ? "Drag and drop the files here"
@@ -99,6 +104,7 @@ export default function UploadBox() {
             ? "Uploading..."
             : "Drag and drop images here, or click to upload"}
         </p>
+
         <input
           type="file"
           multiple

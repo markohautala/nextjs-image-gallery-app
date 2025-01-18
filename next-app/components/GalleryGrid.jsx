@@ -21,22 +21,22 @@ export default function GalleryGrid() {
       }
     };
 
-    // Display the loading spinner first, then fetch images after 2 seconds
+    // Display the loading spinner first, then fetch images after 4 seconds
     const timer = setTimeout(() => {
-      fetchImages(); // Fetch images after the spinner delay
-      setIsLoading(false); // Stop loading after fetching images
-    }, 4000); // 4000ms = 4 seconds
+      fetchImages();
+      setIsLoading(false);
+    }, 4000);
 
     return () => clearTimeout(timer); // Cleanup the timeout on component unmount
-  }, [searchParams]); // Refetch images when query parameters change
+  }, [searchParams]);
 
   // Set up IntersectionObserver to trigger fade-in effect on image elements
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries, observer) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in');
+            entry.target.classList.add("fade-in");
             observer.unobserve(entry.target); // Stop observing once the image has faded in
           }
         });
@@ -47,23 +47,34 @@ export default function GalleryGrid() {
     );
 
     // Observe each image
-    imageRefs.current.forEach(image => {
+    imageRefs.current.forEach((image) => {
       observer.observe(image);
     });
 
     return () => {
       observer.disconnect(); // Cleanup the observer on unmount
     };
-  }, [images]); // Run this effect every time the images change
+  }, [images]);
 
-  // Function to download the image
-  const downloadImage = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = ''; // This will download the image
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  // Function to download the image properly
+  const downloadImage = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "downloaded-image.jpg"; // Default filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Revoke the blob URL to free up memory
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading image:", error);
+    }
   };
 
   return (
@@ -140,31 +151,31 @@ export default function GalleryGrid() {
         }
 
         .image-container {
-          position: relative; // Position relative for absolute children
+          position: relative; /* Position relative for absolute children */
         }
 
         .download-square {
-          position: absolute; // Position it over the image
-          top: 10px; // Move to the top
-          right: 10px; // Move to the right
-          width: 50px; // Set width to 45px
-          height: 50px; // Set height to 45px
-          background: rgba(255, 255, 255, 0.2); // Glassmorphism effect
-          backdrop-filter: blur(20px); // Blur effect
-          border-radius: 5px; // Rounded corners
-          display: flex; // Center the icon
-          justify-content: center; // Center horizontally
-          align-items: center; // Center vertically
-          cursor: pointer; // Change cursor to pointer
+          position: absolute; /* Position it over the image */
+          top: 10px;
+          right: 10px;
+          width: 50px;
+          height: 50px;
+          background: rgba(255, 255, 255, 0.2); /* Glassmorphism effect */
+          backdrop-filter: blur(20px); /* Blur effect */
+          border-radius: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
         }
 
         .download-square:hover {
-          background: rgba(255, 255, 255, 0.4); // Change on hover
+          background: rgba(255, 255, 255, 0.4); /* Change on hover */
         }
 
         .material-symbols-outlined {
-          color: white; // Set icon color to white
-          font-size: 34px; // Adjust icon size if needed
+          color: white;
+          font-size: 34px; /* Adjust icon size if needed */
         }
       `}</style>
     </div>
