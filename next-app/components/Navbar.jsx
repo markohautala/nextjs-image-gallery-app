@@ -29,10 +29,10 @@ const Navbar = () => {
           <div className="ml-auto flex space-x-4">
             <Link
               href="/upload"
-              className={`rounded-md px-5 py-3 text-base font-medium ${
+              className={`rounded-full bg-gray-800 px-5 py-4 text-sm font-semibold text-white shadow-sm ${
                 pathname === '/upload'
-                  ? 'bg-gray-900 text-white' // Active link styling
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white' // Inactive link styling
+                  ? 'border-1 border-white bg-black text-white' // Active state
+                  : 'text-gray-300 hover:bg-black hover:text-white' // Default hover behavior
               }`}
             >
               Upload
@@ -40,10 +40,10 @@ const Navbar = () => {
 
             <Link
               href="/gallery"
-              className={`rounded-md px-5 py-3 text-base font-medium ${
+              className={`rounded-full bg-gray-800 px-5 py-4 text-sm font-semibold text-white shadow-sm ${
                 pathname === '/gallery'
-                  ? 'bg-gray-900 text-white' // Active link styling
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white' // Inactive link styling
+                  ? 'border-1 border-white bg-black text-white' // Active state
+                  : 'text-gray-300 hover:bg-black hover:text-white' // Default hover behavior
               }`}
             >
               Gallery
