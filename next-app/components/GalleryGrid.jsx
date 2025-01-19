@@ -141,8 +141,8 @@ export default function GalleryGrid() {
         }
 
         .spinner-gif {
-          width: 100px; /* Adjust the size of the GIF */
-          height: 100px;
+          width: 80px; /* Adjust the size of the GIF */
+          height: 80px;
         }
 
         /* Fade-in effect when image comes into view */

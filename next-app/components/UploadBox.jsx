@@ -8,6 +8,7 @@ export default function UploadBox() {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState([]); // Track progress for each file
+  const [uploadsComplete, setUploadsComplete] = useState(false); // Tracks if uploads are done
   const router = useRouter();
 
   const handleUpload = async (e) => {
@@ -23,6 +24,7 @@ export default function UploadBox() {
     setError(""); // Reset error if files are valid
     setLoading(true);
     setUploadProgress([]); // Clear previous progress
+    setUploadsComplete(false); // Reset uploads complete state
 
     try {
       // Convert FileList to Array
@@ -72,7 +74,10 @@ export default function UploadBox() {
       // Wait for all uploads to complete
       await Promise.all(uploadPromises);
 
-      // After all uploads are done, redirect to the gallery page
+      // Mark uploads as complete
+      setUploadsComplete(true);
+
+      // Delay redirect to gallery page to let user view progress bars
       setTimeout(() => {
         router.push("/gallery?refresh=true");
       }, 5000); // Add delay to allow for completion
@@ -131,31 +136,48 @@ export default function UploadBox() {
           boxSizing: "border-box",
         }}
       >
-        {/* Upload Icon */}
-        <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "#7CACF8" }}>
-          cloud_upload
-        </span>
+        {/* Show loading spinner and progress bars during upload */}
+        {loading || uploadsComplete ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div className="loading-spinner">
+              <img
+                src="/images/spinner.gif"
+                alt="Loading..."
+                className="spinner-gif"
+                style={{ width: "45px", height: "45px", marginBottom: "10px" }}
+              />
+            </div>
 
-        <p>
-          {dragging
-            ? "Drag and drop the files here - maximum 5 images at a time"
-            : loading
-            ? "Uploading..."
-            : error
-            ? error
-            : "Drag and drop your images here, or click to upload - maximum 5 images at a time"}
-        </p>
-
-        {/* Display upload progress for each file */}
-        {uploadProgress.length > 0 && (
-          <div>
-            {uploadProgress.map((progress, index) => (
-              <div key={index}>
-                <p>{`File ${index + 1}: ${progress.status}`}</p>
-                <progress value={progress.progress} max="100"></progress>
+            {/* Display upload progress for each file */}
+            {uploadProgress.length > 0 && (
+              <div style={{ width: "100%", textAlign: "center" }}>
+                {uploadProgress.map((progress, index) => (
+                  <div key={index} style={{ marginBottom: "10px" }}>
+                    <p>{`File ${index + 1}: ${progress.status}`}</p>
+                    <progress value={progress.progress} max="100" style={{ width: "100%" }}></progress>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
+        ) : (
+          <>
+            {/* Upload Icon */}
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "48px", color: "#7CACF8" }}
+            >
+              cloud_upload
+            </span>
+
+            <p>
+              {dragging
+                ? "Drag and drop the files here - maximum 5 images at a time"
+                : error
+                ? error
+                : "Drag and drop your images here, or click to upload - maximum 5 images at a time"}
+            </p>
+          </>
         )}
 
         <input
