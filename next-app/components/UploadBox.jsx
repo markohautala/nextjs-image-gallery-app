@@ -83,9 +83,9 @@ export default function UploadBox() {
         onDragLeave={handleDragLeave}
         style={{
           width: "75vw",
-          border: dragging ? "2px solid #4CAF50" : "2px dashed gray",
+          border: dragging ? "3px solid #7CACF8" : "3px dashed gray",
           padding: "20px",
-          borderRadius: "8px",
+          borderRadius: "10px",
           textAlign: "center",
           cursor: "pointer",
           position: "relative",
