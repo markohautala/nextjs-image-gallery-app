@@ -6,43 +6,52 @@ import { useRouter } from "next/navigation"; // Import from next/navigation
 export default function UploadBox() {
   const [loading, setLoading] = useState(false);
   const [dragging, setDragging] = useState(false); // Track if files are being dragged
+  const [error, setError] = useState(""); // Track upload errors
   const router = useRouter(); // Initialize the router
 
   const handleUpload = async (e) => {
     const files = e.target.files || e.dataTransfer?.files; // Get files from input or dropped files
     if (!files || files.length === 0) return;
 
-    setLoading(true);
+    // Check if the number of files exceeds the limit
+    if (files.length > 5) {
+      setError("You can upload a maximum of 5 images at once.");
+      return;
+    }
 
-    // Show "Uploading..." for 2 seconds before starting the actual upload
-    setTimeout(async () => {
-      try {
-        const formData = new FormData();
-        // Add each file to FormData
-        for (const file of files) {
-          formData.append("file", file);
-        }
+    setError(""); // Reset error if files are valid
+    setLoading(true); // Show loading status immediately
 
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formData, // Send FormData as request body
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Image uploaded:", data.url);
-
-          // Redirect to gallery and include a query parameter to refresh
-          router.push("/gallery?refresh=true");
-        } else {
-          console.error("Upload failed");
-        }
-      } catch (error) {
-        console.error("Error during upload:", error);
-      } finally {
-        setLoading(false); // Hide loading state after the upload process
+    try {
+      // Make the API call immediately
+      const formData = new FormData();
+      // Add each file to FormData
+      for (const file of files) {
+        formData.append("file", file);
       }
-    }, 4000); // 4000ms = 4 seconds delay before starting the upload
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData, // Send FormData as request body
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Image uploaded:", data.url);
+
+        // Wait for 5 seconds to allow time for the upload to Cloudinary
+        setTimeout(() => {
+          // After 5 seconds, redirect to the gallery
+          router.push("/gallery?refresh=true");
+        }, 5000); // 5000ms = 5 seconds delay
+      } else {
+        console.error("Upload failed");
+      }
+    } catch (error) {
+      console.error("Error during upload:", error);
+    }
+
+    // The "Uploading..." status will be shown for 5 seconds before redirecting
   };
 
   // Prevent default behavior for drag events
@@ -101,7 +110,9 @@ export default function UploadBox() {
           {dragging
             ? "Drag and drop the files here - maximum 5 images at a time"
             : loading
-            ? "Uploading..."
+            ? "Uploading..." // Show "Uploading..." immediately after the API call
+            : error
+            ? error
             : "Drag and drop images here, or click to upload - maximum 5 images at a time"}
         </p>
 
