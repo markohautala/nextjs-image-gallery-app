@@ -6,7 +6,7 @@ export async function GET() {
     const { resources } = await cloudinary.search
       .expression("folder:nextjs-gallery") // Sök efter bilder i mappen "nextjs-gallery"
       .sort_by("created_at", "desc") // Sortera nyaste först
-      .max_results(20) // Begränsa antal bilder (ändra vid behov)
+      .max_results(200) // Begränsa antal bilder (ändra vid behov)
       .execute();
 
     // Formatera resultaten
