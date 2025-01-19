@@ -29,9 +29,9 @@ const Navbar = () => {
           <div className="ml-auto flex space-x-4">
             <Link
               href="/upload"
-              className={`rounded-full bg-gray-800 px-5 py-4 text-sm font-semibold text-white shadow-sm ${
+              className={`rounded-full bg-gray-800 py-2 px-4 text-sm font-bold text-white shadow-sm ${
                 pathname === '/upload'
-                  ? 'border-1 border-white bg-black text-white' // Active state
+                  ? 'border border-black bg-gray-600 text-white' // Active state
                   : 'text-gray-300 hover:bg-black hover:text-white' // Default hover behavior
               }`}
             >
@@ -40,9 +40,9 @@ const Navbar = () => {
 
             <Link
               href="/gallery"
-              className={`rounded-full bg-gray-800 px-4 py-4 text-sm font-semibold text-white shadow-sm ${
+              className={`rounded-full bg-gray-800 py-2 px-4 text-sm font-bold text-white shadow-sm ${
                 pathname === '/gallery'
-                  ? 'border-1 border-white bg-black text-white' // Active state
+                  ? 'border border-black bg-gray-600 text-white' // Active state
                   : 'text-gray-300 hover:bg-black hover:text-white' // Default hover behavior
               }`}
             >

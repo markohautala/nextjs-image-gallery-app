@@ -99,10 +99,10 @@ export default function UploadBox() {
 
         <p>
           {dragging
-            ? "Drag and drop the files here"
+            ? "Drag and drop the files here - maximum 5 images at a time"
             : loading
             ? "Uploading..."
-            : "Drag and drop images here, or click to upload"}
+            : "Drag and drop images here, or click to upload - maximum 5 images at a time"}
         </p>
 
         <input
