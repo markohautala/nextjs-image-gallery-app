@@ -143,7 +143,7 @@ export default function UploadBox() {
             ? "Uploading..."
             : error
             ? error
-            : "Drag and drop images here, or click to upload - maximum 5 images at a time"}
+            : "Drag and drop your images here, or click to upload - maximum 5 images at a time"}
         </p>
 
         {/* Display upload progress for each file */}
