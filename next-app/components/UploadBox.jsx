@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function UploadBox() {
@@ -10,8 +10,10 @@ export default function UploadBox() {
   const [uploadProgress, setUploadProgress] = useState([]);
   const [uploadsComplete, setUploadsComplete] = useState(false);
   const router = useRouter();
+  const fileInputRef = useRef(null);
 
   const handleUpload = async (e) => {
+    e.preventDefault();
     const files = e.target.files || e.dataTransfer?.files;
     if (!files || files.length === 0) return;
 
@@ -80,14 +82,14 @@ export default function UploadBox() {
         });
       };
 
-      const uploadPromises = fileList.map((file, index) => uploadFile(file, index));
-      await Promise.all(uploadPromises);
+      await Promise.all(fileList.map((file, index) => uploadFile(file, index)));
       setUploadsComplete(true);
       setTimeout(() => {
         router.push("/gallery");
       }, 3000);
     } catch (error) {
       console.error("Error during upload:", error);
+      setError("An error occurred during the upload.");
     } finally {
       setLoading(false);
     }
@@ -109,7 +111,7 @@ export default function UploadBox() {
   };
 
   const handleClick = () => {
-    document.getElementById("file-upload").click();
+    fileInputRef.current.click();
   };
 
   return (
@@ -174,7 +176,7 @@ export default function UploadBox() {
             </p>
           </>
         )}
-        <input type="file" multiple onChange={handleUpload} style={{ display: "none" }} id="file-upload" />
+        <input type="file" multiple onChange={handleUpload} ref={fileInputRef} style={{ display: "none" }} />
       </div>
     </div>
   );

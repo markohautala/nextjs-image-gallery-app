@@ -1,58 +1,54 @@
 import cloudinary from "../../../utils/cloudinary";
+import { Readable } from "stream";
 
 export async function POST(req) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file"); // Hämtar filen från FormData
+    const file = formData.get("file");
 
     if (!file) {
-      return new Response(
-        JSON.stringify({ error: "Ingen fil bifogad" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Ingen fil bifogad" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Konvertera File till buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Ladda upp buffer till Cloudinary
-    const uploadResponse = await cloudinary.uploader.upload_stream(
-      { folder: "nextjs-gallery" }, // Ange mappnamn
-      (error, result) => {
-        if (error) {
-          console.error("Cloudinary-fel:", error);
-          throw new Error("Uppladdningen till Cloudinary misslyckades");
-        }
-        return result;
-      }
-    );
+    // Cloudinary Upload Wrapped in a Promise
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "nextjs-gallery" },
+          (error, result) => {
+            if (error) {
+              console.error("Cloudinary error:", error);
+              reject(new Error("Upload to Cloudinary failed"));
+            } else {
+              resolve(result);
+            }
+          }
+        );
 
-    // Skapa en läsbar stream från buffern och skicka till Cloudinary
-    const { Readable } = require("stream");
-    const readableStream = new Readable();
-    readableStream.push(buffer);
-    readableStream.push(null); // Signalera slut på stream
-    readableStream.pipe(uploadResponse);
+        const readableStream = new Readable();
+        readableStream.push(buffer);
+        readableStream.push(null);
+        readableStream.pipe(uploadStream);
+      });
+    };
 
-    return new Response(
-      JSON.stringify({ url: uploadResponse.secure_url }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const uploadResponse = await uploadToCloudinary();
+
+    return new Response(JSON.stringify({ url: uploadResponse.secure_url }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("Fel vid uppladdning:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    console.error("Upload error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
