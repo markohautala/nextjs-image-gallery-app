@@ -7,89 +7,92 @@ export default function UploadBox() {
   const [loading, setLoading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
-  const [uploadProgress, setUploadProgress] = useState([]); // Track progress for each file
-  const [uploadsComplete, setUploadsComplete] = useState(false); // Tracks if uploads are done
+  const [uploadProgress, setUploadProgress] = useState([]);
+  const [uploadsComplete, setUploadsComplete] = useState(false);
   const router = useRouter();
 
   const handleUpload = async (e) => {
     const files = e.target.files || e.dataTransfer?.files;
     if (!files || files.length === 0) return;
 
-    // Check if the number of files exceeds the limit
     if (files.length > 5) {
       setError("You can upload a maximum of 5 images at once.");
       return;
     }
 
-    setError(""); // Reset error if files are valid
+    setError("");
     setLoading(true);
-    setUploadProgress([]); // Clear previous progress
-    setUploadsComplete(false); // Reset uploads complete state
+    setUploadProgress([]);
+    setUploadsComplete(false);
 
     try {
-      // Convert FileList to Array
       const fileList = Array.from(files);
-
-      // Initialize the progress state for each file
       const initialProgress = fileList.map(() => ({ status: "Uploading...", progress: 0 }));
       setUploadProgress(initialProgress);
 
-      // Function to upload a single file and track progress
       const uploadFile = async (file, index) => {
         const formData = new FormData();
         formData.append("file", file);
 
-        try {
-          const response = await fetch("/api/upload", {
+        return new Promise((resolve) => {
+          let progress = 0;
+          const interval = setInterval(() => {
+            setUploadProgress((prev) => {
+              const newProgress = [...prev];
+              if (progress < 95) {
+                progress += Math.random() * 10;
+                newProgress[index] = { status: "Uploading...", progress: Math.min(95, progress) };
+              }
+              return newProgress;
+            });
+          }, 300);
+
+          fetch("/api/upload", {
             method: "POST",
             body: formData,
-          });
-
-          if (!response.ok) {
-            throw new Error("Upload failed");
-          }
-
-          const data = await response.json();
-          console.log("Image uploaded:", data.url);
-
-          // Update progress for the uploaded file
-          setUploadProgress((prev) => {
-            const newProgress = [...prev];
-            newProgress[index] = { status: "Uploaded", progress: 100 };
-            return newProgress;
-          });
-        } catch (error) {
-          setUploadProgress((prev) => {
-            const newProgress = [...prev];
-            newProgress[index] = { status: "Failed", progress: 0 };
-            return newProgress;
-          });
-          console.error("Error during upload:", error);
-        }
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Upload failed");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Image uploaded:", data.url);
+              clearInterval(interval);
+              setUploadProgress((prev) => {
+                const newProgress = [...prev];
+                newProgress[index] = { status: "Uploaded", progress: 100 };
+                return newProgress;
+              });
+              resolve();
+            })
+            .catch((error) => {
+              console.error("Error during upload:", error);
+              clearInterval(interval);
+              setUploadProgress((prev) => {
+                const newProgress = [...prev];
+                newProgress[index] = { status: "Failed", progress: 0 };
+                return newProgress;
+              });
+              resolve();
+            });
+        });
       };
 
-      // Upload each file in parallel
       const uploadPromises = fileList.map((file, index) => uploadFile(file, index));
-
-      // Wait for all uploads to complete
       await Promise.all(uploadPromises);
-
-      // Mark uploads as complete
       setUploadsComplete(true);
-
-      // Delay redirect to gallery page to let user view progress bars
       setTimeout(() => {
-        router.push("/gallery?refresh=true");
-      }, 5000); // Add delay to allow for completion
-
+        router.push("/gallery");
+      }, 3000);
     } catch (error) {
       console.error("Error during upload:", error);
     } finally {
-      setLoading(false); // Stop loading when all uploads are complete
+      setLoading(false);
     }
   };
 
-  // Prevent default behavior for drag events
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragging(true);
@@ -136,7 +139,6 @@ export default function UploadBox() {
           boxSizing: "border-box",
         }}
       >
-        {/* Show loading spinner and progress bars during upload */}
         {loading || uploadsComplete ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <div className="loading-spinner">
@@ -147,8 +149,6 @@ export default function UploadBox() {
                 style={{ width: "45px", height: "45px", marginBottom: "10px" }}
               />
             </div>
-
-            {/* Display upload progress for each file */}
             {uploadProgress.length > 0 && (
               <div style={{ width: "100%", textAlign: "center" }}>
                 {uploadProgress.map((progress, index) => (
@@ -162,14 +162,9 @@ export default function UploadBox() {
           </div>
         ) : (
           <>
-            {/* Upload Icon */}
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "48px", color: "#7CACF8" }}
-            >
+            <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "#7CACF8" }}>
               cloud_upload
             </span>
-
             <p>
               {dragging
                 ? "Drag and drop the files here - maximum 5 images at a time"
@@ -179,17 +174,7 @@ export default function UploadBox() {
             </p>
           </>
         )}
-
-        <input
-          type="file"
-          multiple
-          onChange={handleUpload}
-          style={{ display: "none" }}
-          id="file-upload"
-        />
-        <label htmlFor="file-upload" style={{ display: "none" }}>
-          {loading ? "Uploading..." : "Click to select files"}
-        </label>
+        <input type="file" multiple onChange={handleUpload} style={{ display: "none" }} id="file-upload" />
       </div>
     </div>
   );
