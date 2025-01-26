@@ -86,7 +86,7 @@ export default function GalleryGrid() {
           <img src="/images/spinner.gif" alt="Loading..." className="spinner-gif" />
         </div>
       ) : (
-        <div className="gallery-columns">
+        <div className="gallery-grid">
           {/* Render images in a grid layout */}
           {images.map((image, index) => (
             <div className="image-container" key={image.id}>
@@ -110,26 +110,33 @@ export default function GalleryGrid() {
           padding: 10px;
         }
 
-        .gallery-columns {
-          column-count: 1; /* Default to 1 column */
-          column-gap: 10px;
+        .gallery-grid {
+          display: grid;
+          grid-template-columns: repeat(1, 1fr); /* 1 column by default */
+          gap: 10px;
+          grid-auto-rows: minmax(200px, auto); /* Set minimum height for rows */
+        }
 
-          /* Medium screens: 2 columns */
-          @media (min-width: 768px) {
-            column-count: 2;
+        /* For medium-sized screens (tablet): 2 columns */
+        @media (min-width: 768px) {
+          .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
+        }
 
-          /* Large screens: 3 columns */
-          @media (min-width: 1024px) {
-            column-count: 3;
+        /* For large screens (desktop): 3 columns */
+        @media (min-width: 1024px) {
+          .gallery-grid {
+            grid-template-columns: repeat(3, 1fr);
           }
         }
 
         .gallery-image {
           width: 100%;
+          height: 100%; /* Ensures the image takes up the full space of its container */
           margin-bottom: 10px;
           border-radius: 12px;
-          object-fit: cover; /* Ensures images fit well */
+          object-fit: cover; /* Ensures images maintain aspect ratio and cover the space */
           display: block; /* Ensures images stay aligned within columns */
           opacity: 0; /* Initially set to fully transparent */
           transition: opacity 0.7s ease-out; /* Smooth fade-in transition */
