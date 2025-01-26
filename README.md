@@ -17,6 +17,11 @@ This is an image upload app I built using **Next.js**, **React**, **Tailwind CSS
 - **Error Handling**: If something goes wrong during the upload, an error message shows up.
 - **Automatic Redirect**: After uploading, you’re automatically redirected to a gallery page after a few seconds (I didn't include the URL here because it's for personal use by the client).
 
+
+## Lighthouse report
+
+![Lighthouse Report](next-app/public/images/image6.png)
+
 ## How it Works
 
 - **Uploading**: When a file is dropped or selected, it gets sent to the server via **`FormData`** using the **Fetch API**. The server then uploads the image to Cloudinary.
