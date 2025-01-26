@@ -47,6 +47,12 @@ Here are a couple of example images that I used to test the functionality:
 #### Desktop view upload page
 ![Desktop view upload page](next-app/public/images/image5.png)
 
+#### Loading gifs when fetching images or loading pages
+![Loading gif when fetching images](next-app/public/images/image8.png)
+
+#### Progress bars to show user status of uploads
+![Progress bars to show user status of uploads](next-app/public/images/image7.png)
+
 
 ## Note
 
