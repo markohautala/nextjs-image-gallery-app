@@ -3,75 +3,76 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation"; // Import from next/navigation
 
+// GalleryGrid component is responsible for displaying images in a grid format.
 export default function GalleryGrid() {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); // State to store fetched images
   const [isLoading, setIsLoading] = useState(true); // Track loading state
   const searchParams = useSearchParams(); // Access query parameters
 
-  const imageRefs = useRef([]); // Array to hold references for images
+  const imageRefs = useRef([]); // Store references for each image element
 
+  // useEffect to fetch images and control loading state
   useEffect(() => {
     const fetchImages = async () => {
-      const response = await fetch("/api/images");
+      const response = await fetch("/api/images"); // Fetch images from the API
       if (response.ok) {
         const data = await response.json();
-        setImages(data);
+        setImages(data); // Set images to state once fetched
       } else {
         console.error("Could not fetch images");
       }
     };
 
-    // Display the loading spinner first, then fetch images after 4 seconds
+    // Delay fetching images to show a loading spinner first
     const timer = setTimeout(() => {
       fetchImages();
-      setIsLoading(false);
-    }, 4000);
+      setIsLoading(false); // Set loading state to false after images are fetched
+    }, 4000); // 4-second delay for loading spinner
 
-    return () => clearTimeout(timer); // Cleanup the timeout on component unmount
+    return () => clearTimeout(timer); // Cleanup the timer on component unmount
   }, [searchParams]);
 
-  // Set up IntersectionObserver to trigger fade-in effect on image elements
+  // useEffect to observe when images come into view and apply fade-in effect
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("fade-in");
-            observer.unobserve(entry.target); // Stop observing once the image has faded in
+            entry.target.classList.add("fade-in"); // Add fade-in class
+            observer.unobserve(entry.target); // Stop observing after fade-in
           }
         });
       },
       {
-        threshold: 0.5, // Trigger when at least 50% of the image is in view
+        threshold: 0.5, // Trigger fade-in when at least 50% of the image is visible
       }
     );
 
-    // Observe each image
+    // Observe each image in the grid
     imageRefs.current.forEach((image) => {
       observer.observe(image);
     });
 
     return () => {
-      observer.disconnect(); // Cleanup the observer on unmount
+      observer.disconnect(); // Cleanup observer on component unmount
     };
   }, [images]);
 
-  // Function to download the image properly
+  // Function to handle image download
   const downloadImage = async (url) => {
     try {
       const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      const blob = await response.blob(); // Get the image as a blob
+      const blobUrl = URL.createObjectURL(blob); // Create a blob URL
 
-      const link = document.createElement("a");
+      const link = document.createElement("a"); // Create an invisible download link
       link.href = blobUrl;
-      link.download = "downloaded-image.jpg"; // Default filename
+      link.download = "downloaded-image.jpg"; // Set the default file name
       document.body.appendChild(link);
-      link.click();
+      link.click(); // Trigger the download
       document.body.removeChild(link);
 
-      // Revoke the blob URL to free up memory
-      URL.revokeObjectURL(blobUrl);
+      URL.revokeObjectURL(blobUrl); // Revoke the blob URL to free up memory
     } catch (error) {
       console.error("Error downloading image:", error);
     }
@@ -81,11 +82,12 @@ export default function GalleryGrid() {
     <div className="gallery-container">
       {isLoading ? (
         <div className="loading-spinner">
-          {/* Display your loading GIF here */}
+          {/* Display the loading spinner while images are being fetched */}
           <img src="/images/spinner.gif" alt="Loading..." className="spinner-gif" />
         </div>
       ) : (
         <div className="gallery-columns">
+          {/* Render images in a grid layout */}
           {images.map((image, index) => (
             <div className="image-container" key={image.id}>
               <img
@@ -95,7 +97,7 @@ export default function GalleryGrid() {
                 ref={(el) => (imageRefs.current[index] = el)} // Assign ref to each image
               />
               <div className="download-square" onClick={() => downloadImage(image.url)}>
-                <span className="material-symbols-outlined">download</span>
+                <span className="material-symbols-outlined">download</span> {/* Download icon */}
               </div>
             </div>
           ))}

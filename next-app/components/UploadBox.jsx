@@ -3,20 +3,34 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
+/**
+ * UploadBox Component:
+ * A file upload component that supports drag-and-drop and file input to upload multiple images.
+ * Displays upload progress for each file, and handles errors, loading, and post-upload redirects.
+ */
 export default function UploadBox() {
-  const [loading, setLoading] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState("");
-  const [uploadProgress, setUploadProgress] = useState([]);
-  const [uploadsComplete, setUploadsComplete] = useState(false);
-  const router = useRouter();
-  const fileInputRef = useRef(null);
+  // State variables
+  const [loading, setLoading] = useState(false); // Tracks if the upload process is loading
+  const [dragging, setDragging] = useState(false); // Tracks if the user is dragging files over the box
+  const [error, setError] = useState(""); // Stores any error messages
+  const [uploadProgress, setUploadProgress] = useState([]); // Tracks the progress of each file upload
+  const [uploadsComplete, setUploadsComplete] = useState(false); // Flag to indicate if all uploads are complete
+  const router = useRouter(); // Router hook for navigating after uploads
+  const fileInputRef = useRef(null); // Reference to the hidden file input element
 
+  /**
+   * Handles the file upload process.
+   * - Validates file selection and starts the upload process.
+   * - Tracks progress for each file.
+   * - Handles success and failure scenarios for each file upload.
+   * - Redirects to the gallery page upon successful upload.
+   */
   const handleUpload = async (e) => {
     e.preventDefault();
     const files = e.target.files || e.dataTransfer?.files;
     if (!files || files.length === 0) return;
 
+    // Restricting file upload to 5 files maximum
     if (files.length > 5) {
       setError("You can upload a maximum of 5 images at once.");
       return;
@@ -32,6 +46,11 @@ export default function UploadBox() {
       const initialProgress = fileList.map(() => ({ status: "Uploading...", progress: 0 }));
       setUploadProgress(initialProgress);
 
+      /**
+       * Uploads a single file and tracks its progress.
+       * @param {File} file - The file to be uploaded
+       * @param {number} index - The index of the file in the file list
+       */
       const uploadFile = async (file, index) => {
         const formData = new FormData();
         formData.append("file", file);
@@ -42,13 +61,14 @@ export default function UploadBox() {
             setUploadProgress((prev) => {
               const newProgress = [...prev];
               if (progress < 95) {
-                progress += Math.random() * 10;
+                progress += Math.random() * 10; // Simulating upload progress
                 newProgress[index] = { status: "Uploading...", progress: Math.min(95, progress) };
               }
               return newProgress;
             });
           }, 300);
 
+          // Sending the file to the server
           fetch("/api/upload", {
             method: "POST",
             body: formData,
@@ -82,8 +102,11 @@ export default function UploadBox() {
         });
       };
 
+      // Upload all selected files in parallel
       await Promise.all(fileList.map((file, index) => uploadFile(file, index)));
       setUploadsComplete(true);
+
+      // Redirect to the gallery page after a short delay
       setTimeout(() => {
         router.push("/gallery");
       }, 3000);
@@ -95,21 +118,33 @@ export default function UploadBox() {
     }
   };
 
+  /**
+   * Handles the drag-over event, setting the dragging state to true.
+   */
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragging(true);
   };
 
+  /**
+   * Handles the drag-leave event, setting the dragging state to false.
+   */
   const handleDragLeave = () => {
     setDragging(false);
   };
 
+  /**
+   * Handles the drop event, initiating the file upload process.
+   */
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
     handleUpload(e);
   };
 
+  /**
+   * Opens the file input dialog when the upload box is clicked.
+   */
   const handleClick = () => {
     fileInputRef.current.click();
   };

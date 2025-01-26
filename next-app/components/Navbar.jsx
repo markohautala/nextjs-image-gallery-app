@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'; // Using usePathname for path detection
 
+// Navbar component that displays navigation links and a logo
 const Navbar = () => {
-  const pathname = usePathname(); // Use usePathname to get the current path
+  const pathname = usePathname(); // Hook to get the current path of the page
 
   return (
     <nav className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
@@ -27,6 +28,7 @@ const Navbar = () => {
 
           {/* Navigation Links - aligned to the right */}
           <div className="ml-auto flex space-x-4">
+            {/* Upload link - conditional styling based on current page */}
             <Link
               href="/upload"
               className={`rounded-full bg-gray-800 py-2 px-4 text-sm font-bold text-white shadow-sm ${
@@ -38,6 +40,7 @@ const Navbar = () => {
               Upload
             </Link>
 
+            {/* Gallery link - conditional styling based on current page */}
             <Link
               href="/gallery"
               className={`rounded-full bg-gray-800 py-2 px-4 text-sm font-bold text-white shadow-sm ${
