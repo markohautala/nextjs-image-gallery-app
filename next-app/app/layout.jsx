@@ -8,7 +8,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         {/* Page title and meta information */}
-        <title>PIXSHARE - Created by Marko Hautala</title>
+        <title>PIXSHARE | Created by Marko Hautala</title>
 
         {/* Favicon for the browser tab */}
         <link rel="icon" href="/images/favicon.png" type="image/png" />
