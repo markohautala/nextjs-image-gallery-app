@@ -23,6 +23,26 @@ This is an image upload app I built using **Next.js**, **React**, **Tailwind CSS
 - **Progress**: The app tracks how much of the image has been uploaded and updates the progress bar accordingly.
 - **Success**: After the upload is complete, the app shows a success message and redirects to the gallery page after a few seconds.
 
+### Example Images
+
+Here are a couple of example images that I used to test the functionality:
+
+#### Three column desktop view
+![Three column desktop view](next-app/public/images/image1.png)
+
+#### Middle sized responsive column grid - two columns
+![Middle sized responsive column grid - two columns](next-app/public/images/image2.png)
+
+#### Mobile view grid - one column
+![Mobile view grid - one column](next-app/public/images/image3.png)
+
+#### Mobile view upload page
+![Mobile view upload page](next-app/public/images/image4.png)
+
+#### Desktop view upload page
+![Desktop view upload page](next-app/public/images/image5.png)
+
+
 ## Note
 
 The app is hosted for personal use by the client, so I haven’t included the URL. However, I tested everything with mockup images, and it works as expected.
@@ -33,3 +53,5 @@ The app is hosted for personal use by the client, so I haven’t included the UR
 2. Install the dependencies with `npm install`.
 3. Start the development server with `npm run dev`.
 4. Open the app in your browser at `http://localhost:3000`.
+
+That's it! Hope you find it useful. Let me know if you have any questions.
